@@ -1,0 +1,19 @@
+{
+  "type": "application",
+  "name": "GBA",
+  "icon": "icon.png",
+  "category": "games",
+  "title": {
+    "en_EN": "GBA Emulator"
+  },
+  "description": {
+    "en_EN": "GBA Emulator"
+  },
+  "mimes": [
+	"application\/octet-stream"
+  ],
+  "files": [
+    "main.js",
+    "main.css"
+  ]
+}
