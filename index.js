@@ -12,7 +12,7 @@ import {
 
 const GBA = require("gbajs");
 
-const createWindow = async (proc,core,metadata) => {
+const createWindow = async (proc,_,core,metadata) => {
 	var canvas = document.createElement("canvas");
 	var ctx = canvas.getContext("2d");
 	canvas.width = 240;
@@ -62,7 +62,7 @@ const createWindow = async (proc,core,metadata) => {
 	
 	proc.createWindow({
 		id: "GBAWindow",
-		title: metadata.title.en_EN+" (0 FPS)",
+		title: _("WIN_TITLE",0),
 		dimension: {width: 240, height: 200},
 		icon: proc.resource(metadata.icon),
 		position: {left: 700, top: 200},
@@ -95,7 +95,7 @@ const createWindow = async (proc,core,metadata) => {
 	})
 	.render(($content,win) => {
 		gba.reportFPS = fps => {
-			win.setTitle(`${metadata.title.en_EN} (FPS: ${fps.toString().substring(0,5)})`);
+			win.setTitle(_("WIN_TITLE",fps.toString().substring(0,5)));
 		};
 		canvas.onresize = () => {
 			win.setDimension({ width: canvas.width, height: canvas.height });
@@ -111,17 +111,17 @@ const createWindow = async (proc,core,metadata) => {
 				core.make("osjs/contextmenu").show({
 					position: ev.target,
 					menu: [
-						{ label: "Open ROM", onclick: () => {
+						{ label: _("FILE_OPENROM"), onclick: () => {
 							core.make("osjs/dialog","file",{ type: "open", mime: metadata.mimes },(btn,item) => {
 								if(btn == "ok") loadROM(item);
 							});
 						} },
-						{ label: "Load Save", onclick: () => {
+						{ label: _("FILE_LOADSAVE"), onclick: () => {
 							core.make("osjs/dialog","file",{ type: "open", mime: metadata.mimes },(btn,item) => {
 								if(btn == "ok") loadSaveData(item);
 							});
 						} },
-						{ label: "Quit", onclick: () => proc.destroy() }
+						{ label: _("FILE_QUIT"), onclick: () => proc.destroy() }
 					]
 				});
 			},
@@ -129,22 +129,22 @@ const createWindow = async (proc,core,metadata) => {
 				core.make("osjs/contextmenu").show({
 					position: ev.target,
 					menu: [
-						{ label: !running ? "Start" : "Stop", onclick: !running ? () => {
+						{ label: !running ? _("EMULATION_START") : _("EMULATION_STOP"), onclick: !running ? () => {
 							running = true;
 							gba.runStable();
 						} : () => {
 							running = false;
 							gba.pause();
 						} },
-						{ label: "Reset", onclick: () => gba.reset() },
-						{ label: "Step", onclick: () => gba.step() }
+						{ label: _("EMULATION_RESET"), onclick: () => gba.reset() },
+						{ label: _("EMULATION_STEP"), onclick: () => gba.step() }
 					]
 				});
 			}
 		},(state,actions) => h(Box,{ grow: 1, padding: false },[
 			h(Menubar,{},[
-				h(MenubarItem,{ onclick: ev => actions.menuFile(ev) },"File"),
-				h(MenubarItem,{ onclick: ev => actions.menuEmulation(ev) },"Emulation")
+				h(MenubarItem,{ onclick: ev => actions.menuFile(ev) },_("MENU_FILE")),
+				h(MenubarItem,{ onclick: ev => actions.menuEmulation(ev) },_("MENU_EMULATION"))
 			]),
 			h("div",{ oncreate: el => el.appendChild(canvas) })
 		]),$content);
@@ -154,16 +154,18 @@ const createWindow = async (proc,core,metadata) => {
 
 const register = (core,args,options,metadata) => {
 	const proc = core.make("osjs/application",{args,options,metadata});
+	const {translatable} = core.make("osjs/locale");
+	const _ = translatable(require("./locales.js"));
 	if(typeof(proc.settings.bios) == "undefined") {
-		core.make("osjs/dialog","file",{ type: "open", mime: metadata.mimes, title: "Select GBA BIOS" },(btn,item) => {
+		core.make("osjs/dialog","file",{ type: "open", mime: metadata.mimes, title: _("BIOS_TITLE") },(btn,item) => {
 			if(btn == "ok") {
 				proc.settings.bios = item.path;
-				proc.saveSettings().then(() => createWindow(proc,core,metadata)).catch(err => {
+				proc.saveSettings().then(() => createWindow(proc,_,core,metadata)).catch(err => {
 					core.make("osjs/dialog","alert",{ message: err.message, title: err.name },(btn,value) => {});
 				});
 			} else proc.destroy();
 		});
-	} else createWindow(proc,core,metadata);
+	} else createWindow(proc,_,core,metadata);
 	return proc;
 };
 

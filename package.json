@@ -1,6 +1,6 @@
 {
   "name": "osjs-gba-application",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "eslint": "eslint *.js",
@@ -9,6 +9,12 @@
     "stylelint": "stylelint index.scss src/**/*.scss",
     "prepublishOnly": "npm run eslint && npm run stylelint && rm ./dist/* && npm run build"
   },
+  "keywords": [
+  	"osjs",
+  	"os.js",
+  	"gda",
+  	"emulator"
+  ],
   "dependencies": {
     "@osjs/gui": "^4.0.8",
     "copy-webpack-plugin": "^4.6.0",
