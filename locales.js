@@ -16,4 +16,4 @@ const en_US = {
 	EMULATION_STEP: "Step"
 };
 
-module.exports = {en_US};
+module.exports = {en_US, en_EN: en_US };
